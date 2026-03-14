@@ -1,10 +1,17 @@
-FROM alpine
+FROM node:18-slim
 
-RUN apk add --no-cache g++ make
+WORKDIR /app
 
-COPY movies.cpp .
+RUN apt-get update && apt-get install -y git
 
-# Compile
-RUN g++ -o movies movies.cpp
+RUN git clone --depth=1 https://github.com/basilikikalantzi/AuctionPlatform_Website_tedi.git && \
+    cp -r AuctionPlatform_Website_tedi/frontend/eauction-web/* .
 
-CMD ["./movies"]
+RUN npm install
+
+RUN npm run build
+
+FROM nginx:latest
+COPY --from=0 /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

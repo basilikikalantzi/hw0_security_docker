@@ -6,7 +6,7 @@ on:
       docker_image:
         description: 'The Docker image to scan'
         required: true
-        default: 'ghcr.io/basilikikalantzi/movies-app:latest'
+        default: 'ghcr.io/basilikikalantzi/eauction-web:latest'
 
 jobs:
   scout:
