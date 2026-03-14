@@ -7,8 +7,7 @@ on:
         description: 'The Docker image to scan'
         required: true
         default: 'ghcr.io/basilikikalantzi/movies-app:latest'
-        #         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # ΑΛΛΑΞΕ το YOUR_GITHUB_USERNAME με το username σου στο GitHub
+      
 
 env:
   REGISTRY: ghcr.io
@@ -31,6 +30,13 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
 
       # Build το Dockerfile και push στο ghcr.io
       - name: Build and push image
