@@ -7,10 +7,6 @@ on:
         description: 'The Docker image to scan'
         required: true
         default: 'ghcr.io/basilikikalantzi/movies-app:latest'
-      
-
-env:
-  REGISTRY: ghcr.io
 
 jobs:
   scout:
@@ -24,29 +20,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-
-      # Build το Dockerfile και push στο ghcr.io
-      - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/movies-app:latest
-
-      # Pull
       - name: Pull the image
         run: docker pull ${{ github.event.inputs.docker_image }}
 
@@ -59,8 +38,6 @@ jobs:
           sarif-file: sca_scout.sarif
           output: sbom_scout.spdx.json
           format: spdx
-          dockerhub-user: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Upload SBOM file as an artifact
         uses: actions/upload-artifact@v4
